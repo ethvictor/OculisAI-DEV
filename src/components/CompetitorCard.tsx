@@ -1,6 +1,7 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { ArrowUpIcon, ArrowDownIcon, TrendingUp, Layout, Star, Plus, Loader2, Globe, Search, ShoppingCart, Zap, Trophy } from "lucide-react";
+import { ArrowUpIcon, ArrowDownIcon, TrendingUp, Layout, Star, Plus, Loader2, Globe, Search, ShoppingCart, Zap, Trophy, Save } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReactMarkdown from "react-markdown";
 import { StoreMetrics } from "@/pages/types";
+import { BACKEND_URL } from "@/utils/api";
+import { useAuth0 } from "@auth0/auth0-react";
 
 // Helper function to clean recommendation text
 function cleanRecommendationText(line: string): string {
@@ -56,7 +59,9 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
   const [isOpen, setIsOpen] = useState(false);
   const [url, setUrl] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
+  const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
 
   const handleAnalyze = async () => {
     if (!url) {
@@ -90,6 +95,65 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
       // Error handling is managed by the parent component
     } finally {
       setIsAnalyzing(false);
+    }
+  };
+  
+  const saveAsReport = async () => {
+    if (!isAuthenticated) {
+      toast({
+        title: "Inloggning krävs",
+        description: "Du måste vara inloggad för att spara rapporter",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const token = await getAccessTokenSilently();
+      
+      const reportData = {
+        user_id: user?.sub,
+        analysis_type: "competitor_analysis",
+        url: store.url,
+        results: {
+          store_name: store.name,
+          seo_analysis: store.analysis?.seo_analysis,
+          ux_analysis: store.analysis?.ux_analysis,
+          content_analysis: store.analysis?.content_analysis,
+          designScore: store.designScore,
+          strengths_summary: store.strengths_summary,
+          is_competitor: true
+        }
+      };
+
+      const response = await fetch(`${BACKEND_URL}/reports`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(reportData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Kunde inte spara rapporten");
+      }
+
+      toast({
+        title: "Rapport sparad",
+        description: "Rapporten har sparats och kan hittas på rapportsidan",
+      });
+    } catch (error) {
+      console.error("Error saving report:", error);
+      toast({
+        title: "Kunde inte spara rapport",
+        description: error instanceof Error ? error.message : "Ett fel uppstod, försök igen senare",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -229,10 +293,22 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-indigo-500" />
-            {store.name || "Konkurrentanalys"}
-          </DialogTitle>
+          <div className="flex justify-between items-center">
+            <DialogTitle className="flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-indigo-500" />
+              {store.name || "Konkurrentanalys"}
+            </DialogTitle>
+            <Button 
+              variant="outline"
+              size="sm"
+              onClick={saveAsReport}
+              disabled={isSaving}
+              className="flex items-center gap-1"
+            >
+              {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+              Spara rapport
+            </Button>
+          </div>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             <a
               href={store.url}

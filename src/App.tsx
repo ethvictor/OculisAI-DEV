@@ -1,3 +1,4 @@
+
 // src/App.tsx
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -54,6 +55,15 @@ const App = () => {
                 
                 <Route
                   path="/rapporter"
+                  element={
+                    <ProtectedRoute allowedPlans={["free-trial", "basic", "pro"]}>
+                      <Reports />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/rapport/:reportId"
                   element={
                     <ProtectedRoute allowedPlans={["free-trial", "basic", "pro"]}>
                       <Reports />

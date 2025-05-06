@@ -1,9 +1,10 @@
-
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlmodel import Session, select
 from database import get_session, Report
 from auth import decode_auth0_token
+# Rätt import från samma paket
+from .user_routes import admin_users
 
 router = APIRouter()
 security = HTTPBearer()
@@ -16,13 +17,28 @@ def create_report(
 ):
     # Validera JWT och hämta claims
     payload   = decode_auth0_token(credentials.credentials)
-    user_id   = payload["sub"]
+    user_id   = payload.get("sub")
     user_plan = payload.get("plan", "free")
-    roles     = payload.get("https://yourdomain/roles", [])
-    is_admin  = "admin" in roles
 
-    # Endast admin eller Plus/Pro får spara
-    if not is_admin and user_plan not in ("plus", "pro"):
+    # Kontrollera admin via roller eller backend-lista
+    roles       = payload.get("https://oculis-ai.example.com/roles", [])
+    is_admin    = isinstance(roles, list) and "admin" in roles
+    # Backend-registrerade admins via user_routes
+    if user_id in admin_users:
+        is_admin = True
+
+    # Kontrollera plan från app_metadata om angivet
+    app_metadata = payload.get("app_metadata", {})
+    if isinstance(app_metadata, dict):
+        metadata_plan = app_metadata.get("plan", "")
+        if metadata_plan in ("plus", "pro", "pro-trial"):
+            user_plan = metadata_plan
+
+    # Debug-loggning
+    print(f"User ID: {user_id}, Is Admin: {is_admin}, User Plan: {user_plan}, App Metadata: {app_metadata}")
+
+    # Admin ELLER Betald plan krävs
+    if not is_admin and user_plan not in ("plus", "pro", "pro-trial"):
         raise HTTPException(403, "Betald plan krävs för att spara rapporter")
 
     # Skapa och spara rapporten
@@ -43,10 +59,11 @@ def list_reports(
     session: Session = Depends(get_session),
 ):
     user_id = decode_auth0_token(credentials.credentials)["sub"]
-    reports = session.exec(
-        select(Report).where(Report.user_id == user_id).order_by(Report.created_at.desc())
+    return session.exec(
+        select(Report)
+        .where(Report.user_id == user_id)
+        .order_by(Report.created_at.desc())
     ).all()
-    return reports
 
 @router.get("/reports/{report_id}", response_model=Report)
 def get_report(
