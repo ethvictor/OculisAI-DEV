@@ -1,3 +1,4 @@
+
 #root {
   margin: 0 auto;
   width: 100%;
@@ -223,6 +224,36 @@
 .hover-lift:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* New competitor card styles */
+.competitor-empty-card {
+  border: 1px dashed rgba(0, 0, 0, 0.15);
+  background-color: rgba(249, 250, 251, 0.8);
+  transition: all 0.2s ease;
+}
+
+.competitor-empty-card:hover {
+  border-color: rgba(79, 70, 229, 0.4);
+  background-color: rgba(249, 250, 251, 1);
+}
+
+.competitor-card {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.competitor-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.analytics-search-bar {
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 @media (prefers-reduced-motion: no-preference) {

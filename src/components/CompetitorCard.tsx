@@ -160,10 +160,12 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Card className="p-6 hover:shadow-lg transition-shadow duration-200 cursor-pointer min-h-[300px] flex items-center justify-center group bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-900/10">
-            <div className="text-center">
-              <Plus className="w-12 h-12 mx-auto mb-4 text-indigo-500 group-hover:scale-110 transition-transform duration-200" />
-              <p className="text-gray-600 dark:text-gray-400">Lägg till konkurrent för analys</p>
+          <Card className="p-6 cursor-pointer border border-indigo-100 shadow-sm rounded-xl transition-all duration-200 hover:shadow-md flex flex-col items-center justify-center h-64 bg-white">
+            <div className="flex flex-col items-center justify-center">
+              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600 mb-4">
+                <Plus className="w-6 h-6" />
+              </div>
+              <p className="text-gray-500">Lägg till konkurrent för analys</p>
             </div>
           </Card>
         </DialogTrigger>
@@ -180,7 +182,7 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
             <Button 
               onClick={handleAnalyze}
               disabled={isAnalyzing}
-              className="w-full relative bg-indigo-500 hover:bg-indigo-600"
+              className="w-full relative bg-indigo-600 hover:bg-indigo-700"
             >
               {isAnalyzing ? (
                 <div className="flex items-center justify-center">
@@ -294,9 +296,9 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Card className="p-6 hover:shadow-lg transition-shadow duration-200 cursor-pointer bg-gradient-to-br from-indigo-50 to-gray-50 dark:from-gray-800 dark:to-indigo-900/20">
+        <Card className="p-6 cursor-pointer border border-indigo-100 shadow-sm rounded-xl bg-white transition-all duration-200 hover:shadow-md">
           {isAnalyzing && (
-            <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 flex items-center justify-center rounded-lg z-10">
+            <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded-lg z-10">
               <div className="flex flex-col items-center">
                 <Loader2 className="w-8 h-8 animate-spin text-indigo-500 mb-2" />
                 <p className="text-sm font-medium">Analyserar konkurrenten...</p>
@@ -307,7 +309,7 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-xl font-semibold mb-1">{store.name || "Ny konkurrent"}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{store.url}</p>
+              <p className="text-sm text-gray-500">{store.url}</p>
             </div>
             <Trophy className="w-6 h-6 text-indigo-500" />
           </div>
@@ -339,6 +341,7 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
           </div>
         </Card>
       </DialogTrigger>
+      
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex justify-between items-center">

@@ -166,46 +166,46 @@ const CompetitorAnalysis = () => {
     .map((_, index) => ({ id: `empty-${index}` }));
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white dark:from-indigo-900/20 dark:to-gray-950">
-      <div className="container py-8">
-        <header className="mb-8 text-center">
-          <div className="inline-block mb-4 bg-indigo-100 dark:bg-indigo-900/30 px-4 py-1 rounded-full">
-            <p className="text-indigo-800 dark:text-indigo-300 text-sm font-medium">Oculis AI</p>
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Konkurrentanalys för <span className="text-indigo-600 dark:text-indigo-400">E-handelsbutiker</span>
+    <div className="min-h-screen bg-gradient-to-b from-indigo-50/30 to-white">
+      <div className="container py-8 px-4 sm:px-6">
+        <div className="text-center mb-10">
+          <div className="text-sm font-medium text-indigo-600 mb-2">Oculis AI</div>
+          <h1 className="text-3xl font-bold mb-3">
+            Konkurrentanalys för <span className="text-indigo-600">E-handelsbutiker</span>
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400">
+          <p className="text-gray-600 max-w-2xl mx-auto">
             Få en djupgående analys av dina konkurrenter med AI-drivna insikter
           </p>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6 max-w-2xl mx-auto">
-            <Input
-              type="text"
-              placeholder="Ange konkurrentens URL (t.ex. example.com)"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              className="flex-1"
-            />
-            <Button
-              onClick={handleAnalyzeCompetitor}
-              disabled={isAnalyzing}
-              className="gap-2 bg-indigo-600 hover:bg-indigo-700"
-            >
-              {isAnalyzing ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Analyserar...
-                </>
-              ) : (
-                <>
-                  <Search className="h-4 w-4" />
-                  Analysera konkurrent
-                </>
-              )}
-            </Button>
+          <div className="mt-8 max-w-2xl mx-auto bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Input
+                type="text"
+                placeholder="Ange konkurrentens URL (t.ex. example.com)"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                className="flex-1 border-gray-200 focus-visible:ring-indigo-500"
+              />
+              <Button
+                onClick={handleAnalyzeCompetitor}
+                disabled={isAnalyzing}
+                className="gap-2 bg-indigo-600 hover:bg-indigo-700 transition-colors"
+              >
+                {isAnalyzing ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Analyserar...
+                  </>
+                ) : (
+                  <>
+                    <Search className="h-4 w-4" />
+                    Analysera konkurrent
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
-        </header>
+        </div>
 
         <LoadingAnimation 
           isVisible={isAnalyzing} 
@@ -213,7 +213,7 @@ const CompetitorAnalysis = () => {
           startTime={analysisStartTime} 
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           {competitors.map((competitor, index) => (
             <CompetitorCard
               key={index}
