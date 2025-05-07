@@ -1,9 +1,9 @@
-
 import { useState } from "react";
 import { StoreCard } from "@/components/StoreCard";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Timer } from "lucide-react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { LoadingAnimation } from "@/components/LoadingAnimation";
 
 export interface AnalysisResult {
   summary: string;
@@ -200,30 +200,11 @@ const Index = () => {
           </p>
         </header>
 
-        {isAnalyzing && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl flex flex-col items-center space-y-4">
-              <div className="relative mb-2">
-                <div className="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                  <div className="w-6 h-6 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center">
-                    <div className="w-4 h-4 bg-emerald-600 rounded-full"></div>
-                  </div>
-                </div>
-              </div>
-              <p className="text-lg font-medium">{analysisPhase || "Analyserar butiken..."}</p>
-              
-              {analysisStartTime && (
-                <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
-                  <Timer className="h-4 w-4 mr-1" />
-                  <span>
-                    {((performance.now() - analysisStartTime) / 1000).toFixed(1)}s
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+        <LoadingAnimation 
+          isVisible={isAnalyzing} 
+          phase={analysisPhase} 
+          startTime={analysisStartTime} 
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {stores.map((store, index) => (

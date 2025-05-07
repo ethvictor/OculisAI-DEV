@@ -9,7 +9,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Loader2, Search, Layout, ShoppingBag, Shield, Briefcase, Smartphone, Timer, LineChart } from "lucide-react";
+import { Loader2, Search, Layout, ShoppingBag, Shield, Briefcase, Smartphone, LineChart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { 
   StoreMetrics, 
@@ -22,6 +22,7 @@ import {
 } from "./types";
 import { SpecializedAnalysisResult } from "@/components/SpecializedAnalysisResult";
 import { BACKEND_URL } from "@/utils/api";
+import { LoadingAnimation } from "@/components/LoadingAnimation";
 
 function formatUrl(url: string): string {
   let formattedUrl = url.trim();
@@ -335,25 +336,11 @@ const PageAnalyzer = () => {
           </div>
         </header>
 
-        {isAnalyzing && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl flex flex-col items-center space-y-4">
-              <div className="flex items-center space-x-4 mb-2">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                <p className="text-lg font-medium">{analysisPhase || "Analyserar sidan..."}</p>
-              </div>
-              
-              {analysisStartTime && (
-                <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
-                  <Timer className="h-4 w-4 mr-1" />
-                  <span>
-                    {((performance.now() - analysisStartTime) / 1000).toFixed(1)}s
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+        <LoadingAnimation 
+          isVisible={isAnalyzing} 
+          phase={analysisPhase} 
+          startTime={analysisStartTime} 
+        />
 
         {analysisResult && (
           <div className="mt-8">

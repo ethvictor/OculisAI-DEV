@@ -1,9 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2, ArrowRight, Sparkles, AlertCircle, Timer } from "lucide-react";
+import { Search, Loader2, ArrowRight, Sparkles, AlertCircle } from "lucide-react";
 import { StoreCard } from "@/components/StoreCard";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,6 +10,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { BACKEND_URL } from "@/utils/api";
+import { LoadingAnimation } from "@/components/LoadingAnimation";
 
 export interface AnalysisResult {
   summary: string;
@@ -364,29 +364,11 @@ const AITools = () => {
           </Card>
         </header>
 
-        {isAnalyzing && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-xl flex flex-col items-center space-y-4">
-              <div className="relative mb-2">
-                <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-                <Sparkles className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-blue-600 w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-medium mb-1">{analysisPhase || "Analyserar din butik"}</h3>
-              <p className="text-gray-500 text-center max-w-sm">
-                Vår AI genomsöker din webbplats efter förbättringsmöjligheter...
-              </p>
-              
-              {analysisStartTime && (
-                <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center mt-2">
-                  <Timer className="h-4 w-4 mr-1" />
-                  <span>
-                    {((performance.now() - analysisStartTime) / 1000).toFixed(1)}s
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+        <LoadingAnimation 
+          isVisible={isAnalyzing} 
+          phase={analysisPhase} 
+          startTime={analysisStartTime} 
+        />
 
         <div className="mt-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

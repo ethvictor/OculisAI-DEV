@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +14,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { AnalysisResult } from "@/pages/types"; // Import AnalysisResult type
+import { LoadingAnimation } from "@/components/LoadingAnimation";
 
 interface StoreComparisonProps {
   searchQuery: string;
@@ -42,6 +42,8 @@ const StoreComparison: React.FC<StoreComparisonProps> = ({ searchQuery, store })
 
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [analysisStartTime, setAnalysisStartTime] = useState<number | null>(null);
+  const [analysisPhase, setAnalysisPhase] = useState<string>("");
   const { toast } = useToast();
 
   // Function to format URL input
@@ -83,6 +85,10 @@ const StoreComparison: React.FC<StoreComparisonProps> = ({ searchQuery, store })
 
     setLoading(true);
     setAnalysis(null);
+    const startTime = performance.now();
+    setAnalysisStartTime(startTime);
+    setAnalysisPhase("Skrapar webbsida...");
+    
     try {
       console.log("Skickar analys-förfrågan för URL:", formattedUrl);
       
@@ -138,6 +144,8 @@ const StoreComparison: React.FC<StoreComparisonProps> = ({ searchQuery, store })
       });
     } finally {
       setLoading(false);
+      setAnalysisPhase("");
+      setAnalysisStartTime(null);
     }
   };
 
@@ -196,6 +204,12 @@ const StoreComparison: React.FC<StoreComparisonProps> = ({ searchQuery, store })
             )}
           </Button>
         </div>
+
+        <LoadingAnimation
+          isVisible={loading}
+          phase={analysisPhase}
+          startTime={analysisStartTime}
+        />
 
         {analysis && (
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

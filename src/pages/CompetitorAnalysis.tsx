@@ -1,12 +1,12 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2, Timer } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import { CompetitorCard } from "@/components/CompetitorCard";
 import { useToast } from "@/hooks/use-toast";
 import { StoreMetrics } from "@/pages/types";
 import { BACKEND_URL } from "@/utils/api";
+import { LoadingAnimation } from "@/components/LoadingAnimation";
 
 function formatUrl(url: string): string {
   let formattedUrl = url.trim();
@@ -207,32 +207,11 @@ const CompetitorAnalysis = () => {
           </div>
         </header>
 
-        {isAnalyzing && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl flex flex-col items-center space-y-4">
-              <div className="flex items-center space-x-4 mb-2">
-                <div className="relative">
-                  <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <div className="w-6 h-6 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center">
-                      <div className="w-4 h-4 bg-indigo-600 rounded-full"></div>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-lg font-medium">{analysisPhase || "Analyserar konkurrenten..."}</p>
-              </div>
-              
-              {analysisStartTime && (
-                <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
-                  <Timer className="h-4 w-4 mr-1" />
-                  <span>
-                    {((performance.now() - analysisStartTime) / 1000).toFixed(1)}s
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+        <LoadingAnimation 
+          isVisible={isAnalyzing} 
+          phase={analysisPhase} 
+          startTime={analysisStartTime} 
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {competitors.map((competitor, index) => (
