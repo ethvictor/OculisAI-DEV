@@ -1,7 +1,8 @@
 
 import React from "react";
 import { Card } from "@/components/ui/card";
-import { Search, Globe, Zap } from "lucide-react";
+import { Search, Globe, Zap, ChartBar } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
 interface StoreMetricsProps {
@@ -30,6 +31,11 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
     return "bg-red-500";
   };
 
+  // Calculate the overall score as an average of all metrics
+  const overallScore = Math.round(
+    (metrics.seo + metrics.usability + metrics.aesthetics) / 3
+  );
+
   return (
     <Card 
       className={cn(
@@ -39,18 +45,25 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
       onClick={onClick}
     >
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
+        {/* Header section with store name, URL and score */}
+        <div className="flex justify-between items-start">
           <div>
             <h3 className="text-xl font-semibold text-[#1d1d1f]">{name}</h3>
             <p className="text-sm text-[#6e6e73] mt-1">{url}</p>
           </div>
-          <div className="rounded-full bg-blue-50 p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          
+          {/* Overall score display */}
+          <div className="flex flex-col items-center">
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center border-4 ${getScoreColor(overallScore)} border-opacity-20 mb-1`}>
+              <span className="text-xl font-bold">{overallScore}%</span>
+            </div>
+            <span className="text-xs text-[#6e6e73]">Total score</span>
           </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="space-y-2">
+        {/* Metrics section */}
+        <div className="space-y-5">
+          <div className="space-y-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <Search className="h-4 w-4 mr-2 text-[#0066cc]" />
@@ -58,15 +71,14 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
               </div>
               <span className="text-sm font-medium">{metrics.seo}%</span>
             </div>
-            <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-              <div 
-                className={`h-full ${getScoreColor(metrics.seo)}`}
-                style={{ width: `${metrics.seo}%` }}
-              />
-            </div>
+            <Progress 
+              value={metrics.seo} 
+              className="h-2 bg-gray-100" 
+              indicatorClassName={getScoreColor(metrics.seo)} 
+            />
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <Zap className="h-4 w-4 mr-2 text-[#0066cc]" />
@@ -74,15 +86,14 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
               </div>
               <span className="text-sm font-medium">{metrics.usability}%</span>
             </div>
-            <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-              <div 
-                className={`h-full ${getScoreColor(metrics.usability)}`}
-                style={{ width: `${metrics.usability}%` }}
-              />
-            </div>
+            <Progress 
+              value={metrics.usability} 
+              className="h-2 bg-gray-100" 
+              indicatorClassName={getScoreColor(metrics.usability)} 
+            />
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <Globe className="h-4 w-4 mr-2 text-[#0066cc]" />
@@ -90,12 +101,25 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
               </div>
               <span className="text-sm font-medium">{metrics.aesthetics}%</span>
             </div>
-            <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-              <div 
-                className={`h-full ${getScoreColor(metrics.aesthetics)}`}
-                style={{ width: `${metrics.aesthetics}%` }}
-              />
-            </div>
+            <Progress 
+              value={metrics.aesthetics} 
+              className="h-2 bg-gray-100" 
+              indicatorClassName={getScoreColor(metrics.aesthetics)} 
+            />
+          </div>
+        </div>
+        
+        {/* Visual summary section */}
+        <div className="pt-2 border-t border-[#e8e8ed]">
+          <div className="flex items-center space-x-2">
+            <ChartBar className="h-4 w-4 text-[#0066cc]" />
+            <span className="text-sm text-[#6e6e73]">
+              {overallScore >= 70 
+                ? "Butiken presterar mycket bra" 
+                : overallScore >= 50 
+                ? "Butiken presterar godkänt" 
+                : "Butiken behöver förbättras"}
+            </span>
           </div>
         </div>
       </div>
