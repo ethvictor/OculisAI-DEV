@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Card } from "@/components/ui/card";
-import { Search, Globe, Zap, ChartBar, Gauge } from "lucide-react";
+import { Search, Gauge, Star, TrendingUp } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +24,11 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
   className,
   onClick
 }) => {
+  // Calculate the overall score as an average of all metrics
+  const overallScore = Math.round(
+    (metrics.seo + metrics.usability + metrics.aesthetics) / 3
+  );
+
   // Helper function to determine color based on score
   const getScoreColor = (score: number) => {
     if (score >= 70) return "bg-green-500";
@@ -37,11 +42,6 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
     return "text-red-700 dark:text-red-400";
   };
 
-  // Calculate the overall score as an average of all metrics
-  const overallScore = Math.round(
-    (metrics.seo + metrics.usability + metrics.aesthetics) / 3
-  );
-
   // Helper function to get text description based on overall score
   const getScoreDescription = (score: number) => {
     if (score >= 80) return "Excellent";
@@ -53,111 +53,96 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
   return (
     <Card 
       className={cn(
-        "overflow-hidden bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-2xl p-6 transition-all duration-300 hover:shadow-lg cursor-pointer transform hover:-translate-y-1",
+        "overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer",
         className
       )}
       onClick={onClick}
     >
-      <div className="space-y-6">
-        {/* Score circle - prominently displayed at top */}
-        <div className="flex justify-center mb-2">
-          <div className={`w-28 h-28 rounded-full flex flex-col items-center justify-center relative`}>
-            <svg className="w-full h-full absolute" viewBox="0 0 100 100">
-              <circle
-                cx="50"
-                cy="50"
-                r="45"
-                fill="none"
-                stroke="#e5e7eb"
-                strokeWidth="8"
-              />
-              <circle
-                cx="50"
-                cy="50"
-                r="45"
-                fill="none"
-                stroke={overallScore >= 70 ? "#10b981" : overallScore >= 50 ? "#f59e0b" : "#ef4444"}
-                strokeWidth="8"
-                strokeDasharray="282.7"
-                strokeDashoffset={282.7 - (282.7 * overallScore) / 100}
-                strokeLinecap="round"
-                transform="rotate(-90 50 50)"
-              />
-            </svg>
-            <span className={`text-3xl font-bold z-10 ${getScoreTextColor(overallScore)}`}>{overallScore}%</span>
-            <span className={`text-xs z-10 font-medium ${getScoreTextColor(overallScore)}`}>
-              {getScoreDescription(overallScore)}
-            </span>
+      <div className="flex flex-col h-full">
+        {/* Header with score circle */}
+        <div className="bg-gray-50 dark:bg-gray-900 p-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-medium text-gray-900 dark:text-gray-100 text-lg">{name}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{url}</p>
+            </div>
+            
+            {/* Score circle */}
+            <div className="relative flex-shrink-0">
+              <div className={`h-16 w-16 rounded-full flex items-center justify-center border-4 ${getScoreColor(overallScore)} bg-white dark:bg-gray-800 border-opacity-30`}>
+                <span className={`text-xl font-bold ${getScoreTextColor(overallScore)}`}>
+                  {overallScore}
+                </span>
+              </div>
+              <span className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-800 text-xs font-medium px-2 py-0.5 rounded-full border border-gray-200 dark:border-gray-700">
+                {getScoreDescription(overallScore)}
+              </span>
+            </div>
           </div>
         </div>
         
-        {/* Header section with store name and URL */}
-        <div className="text-center">
-          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 line-clamp-1">{name}</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 truncate">
-            {url}
-          </p>
-        </div>
-          
-        {/* Metrics section - enhanced with better visual indicators */}
-        <div className="space-y-4 mt-4">
-          <div className="space-y-2.5">
+        {/* Body with metrics */}
+        <div className="p-4 space-y-4 flex-grow">
+          {/* SEO Metric */}
+          <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <Search className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">SEO Score</span>
+                <Search className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">SEO</span>
               </div>
-              <span className={`text-sm font-medium px-2 py-0.5 rounded-full ${getScoreColor(metrics.seo)} bg-opacity-20 ${getScoreTextColor(metrics.seo)}`}>
+              <span className={`text-xs font-semibold px-2 py-1 rounded-full ${getScoreColor(metrics.seo)} bg-opacity-15 ${getScoreTextColor(metrics.seo)}`}>
                 {metrics.seo}%
               </span>
             </div>
             <Progress 
               value={metrics.seo} 
-              className="h-2 bg-gray-100 dark:bg-gray-700" 
-              indicatorClassName={getScoreColor(metrics.seo)} 
+              className="h-1.5 bg-gray-200 dark:bg-gray-700"
+              indicatorClassName={getScoreColor(metrics.seo)}
             />
           </div>
           
-          <div className="space-y-2.5">
+          {/* Usability Metric */}
+          <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <Zap className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                <TrendingUp className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" />
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Användarvänlighet</span>
               </div>
-              <span className={`text-sm font-medium px-2 py-0.5 rounded-full ${getScoreColor(metrics.usability)} bg-opacity-20 ${getScoreTextColor(metrics.usability)}`}>
+              <span className={`text-xs font-semibold px-2 py-1 rounded-full ${getScoreColor(metrics.usability)} bg-opacity-15 ${getScoreTextColor(metrics.usability)}`}>
                 {metrics.usability}%
               </span>
             </div>
             <Progress 
               value={metrics.usability} 
-              className="h-2 bg-gray-100 dark:bg-gray-700" 
-              indicatorClassName={getScoreColor(metrics.usability)} 
+              className="h-1.5 bg-gray-200 dark:bg-gray-700"
+              indicatorClassName={getScoreColor(metrics.usability)}
             />
           </div>
           
-          <div className="space-y-2.5">
+          {/* Aesthetics Metric */}
+          <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <Globe className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                <Star className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" />
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Estetik</span>
               </div>
-              <span className={`text-sm font-medium px-2 py-0.5 rounded-full ${getScoreColor(metrics.aesthetics)} bg-opacity-20 ${getScoreTextColor(metrics.aesthetics)}`}>
+              <span className={`text-xs font-semibold px-2 py-1 rounded-full ${getScoreColor(metrics.aesthetics)} bg-opacity-15 ${getScoreTextColor(metrics.aesthetics)}`}>
                 {metrics.aesthetics}%
               </span>
             </div>
             <Progress 
               value={metrics.aesthetics} 
-              className="h-2 bg-gray-100 dark:bg-gray-700" 
-              indicatorClassName={getScoreColor(metrics.aesthetics)} 
+              className="h-1.5 bg-gray-200 dark:bg-gray-700"
+              indicatorClassName={getScoreColor(metrics.aesthetics)}
             />
           </div>
         </div>
         
-        {/* Visual summary section with improved styling */}
-        <div className="pt-4 mt-2 border-t border-gray-200 dark:border-gray-700">
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 flex items-center">
-            <Gauge className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2 flex-shrink-0" />
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        {/* Footer with summary */}
+        <div className="bg-gray-50 dark:bg-gray-900 p-4 border-t border-gray-200 dark:border-gray-700 mt-auto">
+          <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+            <Gauge className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" />
+            <p>
               {overallScore >= 70 
                 ? "Butiken presterar mycket bra" 
                 : overallScore >= 50 
