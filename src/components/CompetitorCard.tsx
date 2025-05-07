@@ -4,7 +4,7 @@ import { ArrowUpIcon, ArrowDownIcon, TrendingUp, Layout, Star, Plus, Loader2, Gl
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReactMarkdown from "react-markdown";
 import { StoreMetrics } from "@/pages/types";
@@ -160,29 +160,30 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Card className="p-6 cursor-pointer border border-indigo-100 shadow-sm rounded-xl transition-all duration-200 hover:shadow-md flex flex-col items-center justify-center h-64 bg-white">
+          <Card className="competitor-empty-card p-6 cursor-pointer rounded-xl transition-all duration-200 flex flex-col items-center justify-center h-64">
             <div className="flex flex-col items-center justify-center">
-              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600 mb-4">
+              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-[#f5f5f7] text-[#1d1d1f] mb-4">
                 <Plus className="w-6 h-6" />
               </div>
-              <p className="text-gray-500">Lägg till konkurrent för analys</p>
+              <p className="text-[#6e6e73]">Lägg till konkurrent för analys</p>
             </div>
           </Card>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="glass-effect">
           <DialogHeader>
-            <DialogTitle>Lägg till ny konkurrent för analys</DialogTitle>
+            <DialogTitle className="text-xl font-semibold text-center">Lägg till ny konkurrent för analys</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 mt-4">
+          <div className="space-y-4 mt-6">
             <Input
               placeholder="Ange konkurrentens URL (t.ex. example.com)"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
+              className="rounded-lg border border-[#d2d2d7] focus-visible:ring-0 focus-visible:border-[#86868b]"
             />
             <Button 
               onClick={handleAnalyze}
               disabled={isAnalyzing}
-              className="w-full relative bg-indigo-600 hover:bg-indigo-700"
+              className="w-full apple-button"
             >
               {isAnalyzing ? (
                 <div className="flex items-center justify-center">
@@ -296,11 +297,11 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Card className="p-6 cursor-pointer border border-indigo-100 shadow-sm rounded-xl bg-white transition-all duration-200 hover:shadow-md">
+        <Card className="competitor-card p-6 cursor-pointer rounded-xl transition-all duration-200 hover:shadow-md">
           {isAnalyzing && (
-            <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded-lg z-10">
+            <div className="absolute inset-0 bg-white/90 flex items-center justify-center rounded-xl z-10">
               <div className="flex flex-col items-center">
-                <Loader2 className="w-8 h-8 animate-spin text-indigo-500 mb-2" />
+                <Loader2 className="w-8 h-8 animate-spin text-[#0066cc] mb-2" />
                 <p className="text-sm font-medium">Analyserar konkurrenten...</p>
               </div>
             </div>
@@ -308,33 +309,33 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
           
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-xl font-semibold mb-1">{store.name || "Ny konkurrent"}</h3>
-              <p className="text-sm text-gray-500">{store.url}</p>
+              <h3 className="text-xl font-semibold mb-1 text-[#1d1d1f]">{store.name || "Ny konkurrent"}</h3>
+              <p className="text-sm text-[#6e6e73]">{store.url}</p>
             </div>
-            <Trophy className="w-6 h-6 text-indigo-500" />
+            <Trophy className="w-6 h-6 text-[#0066cc]" />
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             {renderMetricCard(
-              <Globe className="w-4 h-4 text-indigo-500" />,
+              <Globe className="w-4 h-4 text-[#0066cc]" />,
               "Besökare/mån",
               store.visitorsPerMonth || "N/A"
             )}
             
             {renderMetricCard(
-              <ShoppingCart className="w-4 h-4 text-indigo-500" />,
+              <ShoppingCart className="w-4 h-4 text-[#0066cc]" />,
               "Produkter",
               store.products
             )}
              
             {renderMetricCard(
-              <Search className="w-4 h-4 text-indigo-500" />,
+              <Search className="w-4 h-4 text-[#0066cc]" />,
               "SEO Score",
               store.designScore?.performance ? `${(store.designScore.performance * 100).toFixed(0)}%` : "N/A"
             )}
             
             {renderMetricCard(
-              <Zap className="w-4 h-4 text-indigo-500" />,
+              <Zap className="w-4 h-4 text-[#0066cc]" />,
               "Prestanda",
               store.designScore?.usability ? `${(store.designScore.usability * 100).toFixed(0)}%` : "N/A"
             )}
@@ -342,11 +343,11 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
         </Card>
       </DialogTrigger>
       
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto glass-effect">
         <DialogHeader>
           <div className="flex justify-between items-center">
-            <DialogTitle className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-indigo-500" />
+            <DialogTitle className="flex items-center gap-2 text-xl font-semibold">
+              <Trophy className="w-5 h-5 text-[#0066cc]" />
               {store.name || "Konkurrentanalys"}
             </DialogTitle>
             <Button 
@@ -354,18 +355,18 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
               size="sm"
               onClick={saveAsReport}
               disabled={isSaving}
-              className="flex items-center gap-1"
+              className="flex items-center gap-1 border border-[#d2d2d7] text-[#1d1d1f] hover:bg-[#f5f5f7]"
             >
               {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
               Spara rapport
             </Button>
           </div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-[#6e6e73]">
             <a
               href={store.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline text-indigo-500"
+              className="text-[#0066cc] hover:underline"
             >
               Besök konkurrent
             </a>
@@ -375,38 +376,38 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
         {/* All metrics section */}
         {renderAllMetrics()}
         
-        <Tabs defaultValue="seo" className="mt-4">
-          <TabsList className="grid w-full grid-cols-4 bg-gray-100 dark:bg-gray-800 rounded-md p-1">
+        <Tabs defaultValue="seo" className="mt-6">
+          <TabsList className="grid w-full grid-cols-4 bg-[#f5f5f7] rounded-lg p-1">
             <TabsTrigger
               value="seo"
-              className="data-[state=active]:bg-indigo-500 data-[state=active]:text-white text-sm py-2 rounded-md"
+              className="data-[state=active]:bg-[#0066cc] data-[state=active]:text-white text-sm py-2 rounded-lg"
             >
               SEO
             </TabsTrigger>
             <TabsTrigger
               value="ux"
-              className="data-[state=active]:bg-indigo-500 data-[state=active]:text-white text-sm py-2 rounded-md"
+              className="data-[state=active]:bg-[#0066cc] data-[state=active]:text-white text-sm py-2 rounded-lg"
             >
               UX
             </TabsTrigger>
             <TabsTrigger
               value="content"
-              className="data-[state=active]:bg-indigo-500 data-[state=active]:text-white text-sm py-2 rounded-md"
+              className="data-[state=active]:bg-[#0066cc] data-[state=active]:text-white text-sm py-2 rounded-lg"
             >
               Innehåll
             </TabsTrigger>
             <TabsTrigger
               value="strengths"
-              className="data-[state=active]:bg-indigo-500 data-[state=active]:text-white text-sm py-2 rounded-md"
+              className="data-[state=active]:bg-[#0066cc] data-[state=active]:text-white text-sm py-2 rounded-lg"
             >
               Styrkor
             </TabsTrigger>
           </TabsList>
 
           {/* SEO Analysis Tab */}
-          <TabsContent value="seo" className="mt-4 space-y-4">
+          <TabsContent value="seo" className="mt-6 space-y-6">
             {store.analysis && store.analysis.seo_analysis ? (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {/* Sammanfattning */}
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                   <h3 className="text-xl font-bold border-b pb-2 mb-2">Sammanfattning</h3>
@@ -428,9 +429,9 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
           </TabsContent>
 
           {/* UX Analysis Tab */}
-          <TabsContent value="ux" className="mt-4 space-y-4">
+          <TabsContent value="ux" className="mt-6 space-y-6">
             {store.analysis?.ux_analysis ? (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {/* Sammanfattning */}
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                   <h3 className="text-xl font-bold border-b pb-2 mb-2">Sammanfattning</h3>
@@ -452,9 +453,9 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
           </TabsContent>
 
           {/* Content Analysis Tab */}
-          <TabsContent value="content" className="mt-4 space-y-4">
+          <TabsContent value="content" className="mt-6 space-y-6">
             {store.analysis?.content_analysis ? (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {/* Sammanfattning */}
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                   <h3 className="text-xl font-bold border-b pb-2 mb-2">Sammanfattning</h3>
@@ -476,7 +477,7 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
           </TabsContent>
 
           {/* Strengths Tab */}
-          <TabsContent value="strengths" className="mt-4 space-y-6">
+          <TabsContent value="strengths" className="mt-6 space-y-6">
             {store.strengths_summary ? (
               <div className="space-y-6">
                 {/* Overall strengths */}

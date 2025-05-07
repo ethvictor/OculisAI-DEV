@@ -166,30 +166,30 @@ const CompetitorAnalysis = () => {
     .map((_, index) => ({ id: `empty-${index}` }));
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-50/30 to-white">
-      <div className="container py-8 px-4 sm:px-6">
-        <div className="text-center mb-10">
-          <div className="text-sm font-medium text-indigo-600 mb-2">Oculis AI</div>
-          <h1 className="text-3xl font-bold mb-3">
-            Konkurrentanalys för <span className="text-indigo-600">E-handelsbutiker</span>
+    <div className="min-h-screen bg-[#f5f5f7]">
+      <div className="container py-12 px-4 sm:px-6 max-w-5xl mx-auto">
+        <div className="text-center mb-12">
+          <div className="text-sm font-semibold text-[#6e6e73] mb-4">Oculis AI</div>
+          <h1 className="text-4xl font-bold mb-5 text-[#1d1d1f]">
+            Konkurrentanalys
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-[#6e6e73] max-w-2xl mx-auto text-lg">
             Få en djupgående analys av dina konkurrenter med AI-drivna insikter
           </p>
 
-          <div className="mt-8 max-w-2xl mx-auto bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+          <div className="mt-10 max-w-2xl mx-auto analytics-search-bar p-2 pl-5">
             <div className="flex flex-col sm:flex-row gap-3">
               <Input
                 type="text"
                 placeholder="Ange konkurrentens URL (t.ex. example.com)"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                className="flex-1 border-gray-200 focus-visible:ring-indigo-500"
+                className="flex-1 border-none shadow-none focus-visible:ring-0 text-[#1d1d1f]"
               />
               <Button
                 onClick={handleAnalyzeCompetitor}
                 disabled={isAnalyzing}
-                className="gap-2 bg-indigo-600 hover:bg-indigo-700 transition-colors"
+                className="gap-2 apple-button"
               >
                 {isAnalyzing ? (
                   <>
@@ -213,7 +213,7 @@ const CompetitorAnalysis = () => {
           startTime={analysisStartTime} 
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
           {competitors.map((competitor, index) => (
             <CompetitorCard
               key={index}
