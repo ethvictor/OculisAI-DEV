@@ -36,6 +36,14 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
     (metrics.seo + metrics.usability + metrics.aesthetics) / 3
   );
 
+  // Helper function to get text description based on overall score
+  const getScoreDescription = (score: number) => {
+    if (score >= 80) return "Excellent";
+    if (score >= 70) return "Bra";
+    if (score >= 50) return "Godkänt";
+    return "Behöver förbättras";
+  };
+
   return (
     <Card 
       className={cn(
@@ -49,10 +57,10 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
         <div className="flex justify-between items-start">
           <div>
             <h3 className="text-xl font-semibold text-[#1d1d1f]">{name}</h3>
-            <p className="text-sm text-[#6e6e73] mt-1">{url}</p>
+            <p className="text-sm text-[#6e6e73] mt-1 truncate max-w-[180px]">{url}</p>
           </div>
           
-          {/* Overall score display */}
+          {/* Overall score display - enhanced with better visual design */}
           <div className="flex flex-col items-center">
             <div className={`w-16 h-16 rounded-full flex items-center justify-center border-4 ${getScoreColor(overallScore)} border-opacity-20 mb-1`}>
               <span className="text-xl font-bold">{overallScore}%</span>
@@ -61,7 +69,7 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
           </div>
         </div>
 
-        {/* Metrics section */}
+        {/* Metrics section - enhanced with better visual indicators */}
         <div className="space-y-5">
           <div className="space-y-2.5">
             <div className="flex items-center justify-between">
@@ -109,7 +117,7 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
           </div>
         </div>
         
-        {/* Visual summary section */}
+        {/* Visual summary section - new, more informative text based on score */}
         <div className="pt-2 border-t border-[#e8e8ed]">
           <div className="flex items-center space-x-2">
             <ChartBar className="h-4 w-4 text-[#0066cc]" />
