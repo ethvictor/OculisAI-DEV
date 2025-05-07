@@ -1,3 +1,4 @@
+
 #root {
   margin: 0 auto;
   width: 100%;
@@ -31,6 +32,8 @@
   transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(20px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .apple-card:hover {
@@ -211,6 +214,15 @@
 
 .welcome-gradient {
   background: linear-gradient(135deg, rgba(77, 59, 153, 0.05) 0%, rgba(127, 102, 223, 0.1) 100%);
+}
+
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
 }
 
 @media (prefers-reduced-motion: no-preference) {
