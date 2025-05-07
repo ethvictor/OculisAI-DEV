@@ -1,8 +1,7 @@
 
 import React from "react";
 import { Card } from "@/components/ui/card";
-import { Search, Gauge, Star, TrendingUp } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
+import { Search, Zap, Globe, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface StoreMetricsProps {
@@ -24,27 +23,15 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
   className,
   onClick
 }) => {
-  // Calculate the overall score as an average of all metrics
-  const overallScore = Math.round(
-    (metrics.seo + metrics.usability + metrics.aesthetics) / 3
-  );
-
-  // Helper function to determine color based on score
-  const getScoreColor = (score: number) => {
+  // Helper function to get the appropriate color based on the score
+  const getScoreColor = (score: number): string => {
     if (score >= 70) return "bg-green-500";
     if (score >= 50) return "bg-yellow-500";
     return "bg-red-500";
   };
-
-  const getScoreTextColor = (score: number) => {
-    if (score >= 70) return "text-green-700 dark:text-green-400";
-    if (score >= 50) return "text-yellow-700 dark:text-yellow-400";
-    return "text-red-700 dark:text-red-400";
-  };
-
-  // Helper function to get text description based on overall score
-  const getScoreDescription = (score: number) => {
-    if (score >= 80) return "Excellent";
+  
+  // Helper function to get the text for the score description
+  const getScoreDescription = (score: number): string => {
     if (score >= 70) return "Bra";
     if (score >= 50) return "Godkänt";
     return "Behöver förbättras";
@@ -53,102 +40,72 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
   return (
     <Card 
       className={cn(
-        "overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer",
+        "bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-300 cursor-pointer",
         className
       )}
       onClick={onClick}
     >
-      <div className="flex flex-col h-full">
-        {/* Header with score circle */}
-        <div className="bg-gray-50 dark:bg-gray-900 p-4 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium text-gray-900 dark:text-gray-100 text-lg">{name}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{url}</p>
-            </div>
-            
-            {/* Score circle */}
-            <div className="relative flex-shrink-0">
-              <div className={`h-16 w-16 rounded-full flex items-center justify-center border-4 ${getScoreColor(overallScore)} bg-white dark:bg-gray-800 border-opacity-30`}>
-                <span className={`text-xl font-bold ${getScoreTextColor(overallScore)}`}>
-                  {overallScore}
-                </span>
-              </div>
-              <span className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-800 text-xs font-medium px-2 py-0.5 rounded-full border border-gray-200 dark:border-gray-700">
-                {getScoreDescription(overallScore)}
-              </span>
-            </div>
+      <div className="p-4 pb-6">
+        {/* Store header */}
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{name}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{url}</p>
           </div>
+          <ShoppingCart className="h-5 w-5 text-blue-500 dark:text-blue-400" />
         </div>
-        
-        {/* Body with metrics */}
-        <div className="p-4 space-y-4 flex-grow">
-          {/* SEO Metric */}
-          <div className="space-y-2">
+
+        {/* Metrics */}
+        <div className="space-y-4">
+          {/* SEO Score */}
+          <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <Search className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">SEO</span>
+              <div className="flex items-center gap-2">
+                <Search className="h-4 w-4 text-blue-500 dark:text-blue-400" />
+                <span className="text-sm text-gray-700 dark:text-gray-300">SEO Score</span>
               </div>
-              <span className={`text-xs font-semibold px-2 py-1 rounded-full ${getScoreColor(metrics.seo)} bg-opacity-15 ${getScoreTextColor(metrics.seo)}`}>
-                {metrics.seo}%
-              </span>
+              <span className="text-sm font-medium">{metrics.seo}%</span>
             </div>
-            <Progress 
-              value={metrics.seo} 
-              className="h-1.5 bg-gray-200 dark:bg-gray-700"
-              indicatorClassName={getScoreColor(metrics.seo)}
-            />
+            <div className="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div 
+                className={`h-full ${getScoreColor(metrics.seo)}`} 
+                style={{ width: `${metrics.seo}%` }}
+              ></div>
+            </div>
           </div>
-          
-          {/* Usability Metric */}
-          <div className="space-y-2">
+
+          {/* Usability */}
+          <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <TrendingUp className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Användarvänlighet</span>
+              <div className="flex items-center gap-2">
+                <Zap className="h-4 w-4 text-blue-500 dark:text-blue-400" />
+                <span className="text-sm text-gray-700 dark:text-gray-300">Användarvänlighet</span>
               </div>
-              <span className={`text-xs font-semibold px-2 py-1 rounded-full ${getScoreColor(metrics.usability)} bg-opacity-15 ${getScoreTextColor(metrics.usability)}`}>
-                {metrics.usability}%
-              </span>
+              <span className="text-sm font-medium">{metrics.usability}%</span>
             </div>
-            <Progress 
-              value={metrics.usability} 
-              className="h-1.5 bg-gray-200 dark:bg-gray-700"
-              indicatorClassName={getScoreColor(metrics.usability)}
-            />
+            <div className="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div 
+                className={`h-full ${getScoreColor(metrics.usability)}`} 
+                style={{ width: `${metrics.usability}%` }}
+              ></div>
+            </div>
           </div>
-          
-          {/* Aesthetics Metric */}
-          <div className="space-y-2">
+
+          {/* Aesthetics */}
+          <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <Star className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Estetik</span>
+              <div className="flex items-center gap-2">
+                <Globe className="h-4 w-4 text-blue-500 dark:text-blue-400" />
+                <span className="text-sm text-gray-700 dark:text-gray-300">Estetik</span>
               </div>
-              <span className={`text-xs font-semibold px-2 py-1 rounded-full ${getScoreColor(metrics.aesthetics)} bg-opacity-15 ${getScoreTextColor(metrics.aesthetics)}`}>
-                {metrics.aesthetics}%
-              </span>
+              <span className="text-sm font-medium">{metrics.aesthetics}%</span>
             </div>
-            <Progress 
-              value={metrics.aesthetics} 
-              className="h-1.5 bg-gray-200 dark:bg-gray-700"
-              indicatorClassName={getScoreColor(metrics.aesthetics)}
-            />
-          </div>
-        </div>
-        
-        {/* Footer with summary */}
-        <div className="bg-gray-50 dark:bg-gray-900 p-4 border-t border-gray-200 dark:border-gray-700 mt-auto">
-          <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
-            <Gauge className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" />
-            <p>
-              {overallScore >= 70 
-                ? "Butiken presterar mycket bra" 
-                : overallScore >= 50 
-                ? "Butiken presterar godkänt" 
-                : "Butiken behöver förbättras"}
-            </p>
+            <div className="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div 
+                className={`h-full ${getScoreColor(metrics.aesthetics)}`} 
+                style={{ width: `${metrics.aesthetics}%` }}
+              ></div>
+            </div>
           </div>
         </div>
       </div>
