@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -272,27 +271,27 @@ const AITools = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
-      <div className="container px-4 py-16 mx-auto">
-        <header className="mb-16 text-center">
+    <div className="min-h-screen bg-[#f8f8fa] dark:bg-gray-900">
+      <div className="container px-4 py-12 mx-auto">
+        <header className="mb-12 text-center">
           {/* Top Badge */}
-          <div className="inline-block mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 px-4 py-1.5 rounded-full">
+          <div className="inline-block mb-4 px-4 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/40 border border-blue-100 dark:border-blue-800/40">
             <p className="text-blue-800 dark:text-blue-300 text-sm font-medium">Oculis AI</p>
           </div>
           
           {/* Main Heading */}
-          <h1 className="text-5xl font-bold tracking-tight text-gray-900 dark:text-white mb-4 fade-in-1">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white mb-4 fade-in-1">
             Optimera din <span className="oculis-gradient-text">E-handelsbutik</span>
           </h1>
           
           {/* Subheading */}
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8 fade-in-2">
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8 fade-in-2">
             Få en skräddarsydd analys och konkreta förbättringar med vår AI-drivna plattform
           </p>
 
           {/* Subscription Alerts */}
           {subscription === "free-trial" && usageRemaining !== null && (
-            <Alert className="max-w-lg mx-auto mb-8 bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-300 glass-effect">
+            <Alert className="max-w-lg mx-auto mb-8 bg-white border border-blue-100 text-blue-800 dark:bg-gray-800 dark:border-blue-800/40 dark:text-blue-300">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Gratis provperiod</AlertTitle>
               <AlertDescription>
@@ -303,7 +302,7 @@ const AITools = () => {
           )}
 
           {subscription === "basic" && usageRemaining !== null && (
-            <Alert className="max-w-lg mx-auto mb-8 bg-indigo-50 text-indigo-800 border-indigo-200 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-300 glass-effect">
+            <Alert className="max-w-lg mx-auto mb-8 bg-white border border-indigo-100 text-indigo-800 dark:bg-gray-800 dark:border-indigo-800/40 dark:text-indigo-300">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Start-plan</AlertTitle>
               <AlertDescription>
@@ -314,12 +313,11 @@ const AITools = () => {
           )}
 
           {/* Main Analysis Card */}
-          <Card className="mt-10 mx-auto max-w-4xl apple-card bg-white/90 dark:bg-gray-800/80 border-0 shadow-xl overflow-hidden fade-in-3">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-50/30 to-blue-50/30 dark:from-purple-900/10 dark:to-blue-900/10 z-0"></div>
+          <Card className="mt-10 mx-auto max-w-4xl border border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-800 shadow-md fade-in-3">
             <CardContent className="p-0 relative z-10">
               <div className="grid grid-cols-1 md:grid-cols-3">
                 <div className="p-8 md:border-r border-gray-100 dark:border-gray-700/30">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/40 flex items-center justify-center mb-4">
                     <span className="font-bold text-blue-700 dark:text-blue-400">1</span>
                   </div>
                   <h3 className="font-semibold text-lg mb-3">Ange din webbadress</h3>
@@ -340,8 +338,8 @@ const AITools = () => {
                   </div>
                 </div>
                 
-                <div className="p-8 md:border-r border-gray-100 dark:border-gray-700/30">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center mb-4">
+                <div className="p-8 md:border-r border-gray-100 dark:border-gray-700/30 bg-gray-50 dark:bg-gray-800/80">
+                  <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/40 flex items-center justify-center mb-4">
                     <span className="font-bold text-blue-700 dark:text-blue-400">2</span>
                   </div>
                   <h3 className="font-semibold text-lg mb-3">Få en AI-analys</h3>
@@ -350,14 +348,13 @@ const AITools = () => {
                   </p>
                   <div className="flex items-center justify-center h-10">
                     <div className="relative">
-                      <div className="absolute inset-0 bg-blue-200 dark:bg-blue-700 rounded-full blur-sm opacity-30 animate-pulse"></div>
-                      <ArrowRight className="w-6 h-6 text-blue-500 dark:text-blue-400 relative z-10" />
+                      <ArrowRight className="w-6 h-6 text-blue-500 dark:text-blue-400" />
                     </div>
                   </div>
                 </div>
                 
-                <div className="p-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center mb-4">
+                <div className="p-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-l border-blue-100 dark:border-blue-800/20">
+                  <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-800 flex items-center justify-center mb-4">
                     <span className="font-bold text-blue-700 dark:text-blue-400">3</span>
                   </div>
                   <h3 className="font-semibold text-lg mb-3">Optimera din butik</h3>
@@ -370,7 +367,7 @@ const AITools = () => {
                       (subscription === "free-trial" && usageRemaining !== null && usageRemaining <= 0) ||
                       (subscription === "basic" && usageRemaining !== null && usageRemaining <= 0)
                     }
-                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white border-0 shadow-lg hover:shadow-xl transition-all"
+                    className="w-full bg-gray-900 hover:bg-black text-white border border-transparent shadow-md hover:shadow-lg transition-all"
                   >
                     {isAnalyzing ? (
                       <>
@@ -397,8 +394,8 @@ const AITools = () => {
         />
 
         {/* Analysis Results Section */}
-        <div className="mt-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {stores.length > 0 ? (
               stores.map((store, index) => (
                 <StoreCard
@@ -410,10 +407,10 @@ const AITools = () => {
             ) : (
               <>
                 {!isAnalyzing && (
-                  <div className="lg:col-span-3 text-center py-16">
-                    <div className="bg-gradient-to-b from-blue-50 to-white dark:from-blue-900/10 dark:to-gray-900/80 rounded-3xl p-12 max-w-2xl mx-auto glass-effect border border-white/20 dark:border-white/5 shadow-lg">
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mx-auto mb-6 shadow-lg">
-                        <Sparkles className="w-8 h-8 text-white" />
+                  <div className="lg:col-span-3 text-center py-12">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-10 max-w-2xl mx-auto border border-gray-200 dark:border-gray-700/40 shadow-md">
+                      <div className="w-14 h-14 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mx-auto mb-6 border border-blue-100 dark:border-blue-800/30">
+                        <Sparkles className="w-7 h-7 text-blue-600 dark:text-blue-400" />
                       </div>
                       <h3 className="text-2xl font-medium mb-3">Inga butiker analyserade ännu</h3>
                       <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
@@ -421,9 +418,8 @@ const AITools = () => {
                       </p>
                       <div className="flex justify-center">
                         <Button 
-                          variant="outline"
                           onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
-                          className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 px-6 py-2"
+                          className="bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-300 px-6 py-2"
                         >
                           Börja analysera
                         </Button>
@@ -437,12 +433,12 @@ const AITools = () => {
         </div>
 
         {/* Features Section */}
-        <div className="mt-24 mb-16">
-          <h2 className="text-2xl md:text-3xl font-semibold text-center mb-12">Vad vi analyserar</h2>
+        <div className="mt-20 mb-16">
+          <h2 className="text-2xl md:text-3xl font-semibold text-center mb-10">Vad vi analyserar</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div className="flex flex-col items-center text-center p-6 apple-card bg-white/90 dark:bg-gray-800/80 hover-lift">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/40 dark:to-indigo-900/40 flex items-center justify-center mb-5 shadow-md">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex flex-col items-center text-center p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/50 rounded-lg shadow-md">
+              <div className="w-14 h-14 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mb-5 border border-blue-100 dark:border-blue-800/30">
                 <Search className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="font-semibold text-xl mb-3">SEO-optimering</h3>
@@ -451,8 +447,8 @@ const AITools = () => {
               </p>
             </div>
             
-            <div className="flex flex-col items-center text-center p-6 apple-card bg-white/90 dark:bg-gray-800/80 hover-lift">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/40 dark:to-indigo-900/40 flex items-center justify-center mb-5 shadow-md">
+            <div className="flex flex-col items-center text-center p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/50 rounded-lg shadow-md">
+              <div className="w-14 h-14 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mb-5 border border-blue-100 dark:border-blue-800/30">
                 <LayoutGrid className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="font-semibold text-xl mb-3">Användarvänlighet</h3>
@@ -461,8 +457,8 @@ const AITools = () => {
               </p>
             </div>
             
-            <div className="flex flex-col items-center text-center p-6 apple-card bg-white/90 dark:bg-gray-800/80 hover-lift">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/40 dark:to-indigo-900/40 flex items-center justify-center mb-5 shadow-md">
+            <div className="flex flex-col items-center text-center p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/50 rounded-lg shadow-md">
+              <div className="w-14 h-14 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mb-5 border border-blue-100 dark:border-blue-800/30">
                 <BarChart3 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="font-semibold text-xl mb-3">Konverteringsoptimering</h3>
@@ -481,7 +477,7 @@ const AITools = () => {
           </p>
           <Button 
             onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} 
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-6 text-lg shadow-lg hover:shadow-xl"
+            className="bg-gray-900 hover:bg-black text-white px-8 py-5 text-lg shadow-md hover:shadow-lg border border-transparent"
           >
             <Zap className="mr-2 h-5 w-5" />
             Starta din analys nu
