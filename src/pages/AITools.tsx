@@ -1,8 +1,9 @@
+
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2, ArrowRight, Sparkles, AlertCircle } from "lucide-react";
+import { Search, Loader2, ArrowRight, Sparkles, AlertCircle, Timer } from "lucide-react";
 import { StoreCard } from "@/components/StoreCard";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
@@ -53,6 +54,8 @@ const AITools = () => {
   const { toast } = useToast();
   const { user } = useAuth0();
   const { subscription, weeklyAnalysesLeft } = useSubscription(user?.sub || "", user?.email || "");
+  const [analysisStartTime, setAnalysisStartTime] = useState<number | null>(null);
+  const [analysisPhase, setAnalysisPhase] = useState<string>("");
   
   // Check remaining usage for free trial users or basic plan users
   useEffect(() => {
@@ -157,9 +160,18 @@ const AITools = () => {
       if (!canProceed) return;
     }
 
+    // Start timing
+    const startTime = performance.now();
+    setAnalysisStartTime(startTime);
     setIsAnalyzing(true);
+    setAnalysisPhase("Förbereder analys...");
+    
+    console.time("totalAnalysisTime");
+    console.log(`🕒 ${new Date().toISOString()} - Påbörjar analys av URL: ${formattedUrl}`);
+    
     try {
       console.log("Skickar förfrågan till backend med URL:", formattedUrl);
+      setAnalysisPhase("Skrapar webbsida...");
       
       const response = await fetch(`${BACKEND_URL}/get_suggestions`, {
         method: "POST",
@@ -174,6 +186,8 @@ const AITools = () => {
         }),
       });
       
+      setAnalysisPhase("Bearbetar data...");
+      
       if (!response.ok) {
         let errorMessage = `HTTP error! status: ${response.status}`;
         try {
@@ -185,6 +199,8 @@ const AITools = () => {
         throw new Error(errorMessage);
       }
 
+      setAnalysisPhase("Genererar insikter...");
+      
       const responseText = await response.text();
       let data;
       try {
@@ -225,12 +241,23 @@ const AITools = () => {
 
       setStores(prev => [...prev, newStore]);
       
+      // Log timing
+      console.timeEnd("totalAnalysisTime");
+      const endTime = performance.now();
+      const totalTime = (endTime - startTime) / 1000;
+      console.log(`✅ Analys slutförd efter ${totalTime.toFixed(2)}s`);
+      
       toast({
         title: "Analys klar",
         description: "Butiken har analyserats framgångsrikt",
       });
     } catch (error) {
+      const endTime = performance.now();
+      const totalTime = (endTime - startTime) / 1000;
+      
       console.error("Fel vid analys av butik:", error);
+      console.log(`❌ Analys misslyckades efter ${totalTime.toFixed(2)}s`);
+      
       toast({
         title: "Ett fel uppstod",
         description: error instanceof Error ? error.message : "Kunde inte analysera butiken",
@@ -238,6 +265,8 @@ const AITools = () => {
       });
     } finally {
       setIsAnalyzing(false);
+      setAnalysisPhase("");
+      setAnalysisStartTime(null);
     }
   };
 
@@ -337,15 +366,24 @@ const AITools = () => {
 
         {isAnalyzing && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-xl flex flex-col items-center">
-              <div className="relative mb-4">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-xl flex flex-col items-center space-y-4">
+              <div className="relative mb-2">
                 <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
                 <Sparkles className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-blue-600 w-6 h-6" />
               </div>
-              <h3 className="text-xl font-medium mb-2">Analyserar din butik</h3>
+              <h3 className="text-xl font-medium mb-1">{analysisPhase || "Analyserar din butik"}</h3>
               <p className="text-gray-500 text-center max-w-sm">
                 Vår AI genomsöker din webbplats efter förbättringsmöjligheter...
               </p>
+              
+              {analysisStartTime && (
+                <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center mt-2">
+                  <Timer className="h-4 w-4 mr-1" />
+                  <span>
+                    {((performance.now() - analysisStartTime) / 1000).toFixed(1)}s
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         )}

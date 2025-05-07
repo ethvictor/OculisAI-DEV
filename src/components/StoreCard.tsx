@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Plus, Loader2, Globe, Search, ShoppingCart, Zap, Save } from "lucide-react";
@@ -46,6 +45,13 @@ function formatUrl(url: string): string {
   }
   
   return formattedUrl;
+}
+
+// Helper function for rendering metrics in the dialog content
+function getScoreColor(score: number) {
+  if (score >= 70) return "bg-green-500";
+  if (score >= 50) return "bg-yellow-500";
+  return "bg-red-500";
 }
 
 interface StoreCardProps {
@@ -154,6 +160,63 @@ export const StoreCard = ({ store, onAnalyze, isEmpty = false }: StoreCardProps)
     } finally {
       setIsSaving(false);
     }
+  };
+
+  // Helper function for rendering metrics in the dialog content
+  const renderAllMetrics = () => {
+    if (!store.designScore) return null;
+    
+    const metrics = [
+      {
+        label: "Användarupplevelse",
+        value: store.designScore.usability ? `${(store.designScore.usability * 100).toFixed(0)}%` : "N/A",
+        color: getScoreColor(store.designScore.usability * 100)
+      },
+      {
+        label: "Estetik",
+        value: store.designScore.aesthetics ? `${(store.designScore.aesthetics * 100).toFixed(0)}%` : "N/A",
+        color: getScoreColor(store.designScore.aesthetics * 100)
+      },
+      {
+        label: "Prestanda",
+        value: store.designScore.performance ? `${(store.designScore.performance * 100).toFixed(0)}%` : "N/A",
+        color: getScoreColor(store.designScore.performance * 100)
+      },
+      {
+        label: "Besökare/mån",
+        value: store.visitorsPerMonth ? `${store.visitorsPerMonth.toLocaleString()}` : "N/A",
+      },
+      {
+        label: "Produkter",
+        value: store.products !== undefined ? store.products.toString() : "N/A",
+      },
+      {
+        label: "Intäkter",
+        value: store.revenue !== undefined ? `${store.revenue.toLocaleString()} kr` : "N/A",
+      },
+      {
+        label: "Genomsnittspris",
+        value: store.averagePrice !== undefined ? `${store.averagePrice.toLocaleString()} kr` : "N/A",
+      }
+    ];
+
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        {metrics.map((metric, index) => (
+          <div key={index} className="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg">
+            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{metric.label}</div>
+            {metric.color ? (
+              <div className="flex items-center">
+                <div className={`w-3 h-3 rounded-full ${metric.color} mr-2`}></div>
+                <div className="text-lg font-semibold">{metric.value}</div>
+              </div>
+            ) : (
+              <div className="text-lg font-semibold">{metric.value}</div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
   };
 
   if (isEmpty) {
@@ -276,103 +339,37 @@ export const StoreCard = ({ store, onAnalyze, isEmpty = false }: StoreCardProps)
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex justify-between items-center">
-            <DialogTitle className="flex items-center gap-2">
-              <ShoppingCart className="w-5 h-5 text-blue-500" />
-              {store.name || "Butiksanalys"}
-            </DialogTitle>
-            <Button 
-              variant="outline"
-              size="sm"
-              onClick={saveAsReport}
-              disabled={isSaving}
-              className="flex items-center gap-1"
-            >
-              {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
-              Spara rapport
-            </Button>
+            <DialogTitle>{store.name || "Butiksanalys"}</DialogTitle>
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="outline"
+                size="sm"
+                onClick={saveAsReport}
+                disabled={isSaving}
+                className="flex items-center gap-1"
+              >
+                {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                Spara rapport
+              </Button>
+            </div>
           </div>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            <a
-              href={store.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline text-blue-500"
-            >
-              Besök butik
-            </a>
+            {store.url && (
+              <a
+                href={store.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-blue-500"
+              >
+                Besök butik
+              </a>
+            )}
           </p>
         </DialogHeader>
-        
-        {/* Design Score Summary */}
-        <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg">
-          <h3 className="text-lg font-semibold mb-4">Design & Användbarhet</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-6">
-              {/* Användarvänlighet */}
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span className="font-medium">Användarvänlighet</span>
-                  <span className="font-bold">
-                    {store.designScore?.usability ? (store.designScore.usability * 100).toFixed(0) : "N/A"}%
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div
-                    className={`${getBarColor((store.designScore?.usability || 0) * 100)} h-3 rounded-full transition-all duration-500`}
-                    style={{ width: `${(store.designScore?.usability || 0) * 100}%` }}
-                  />
-                </div>
-              </div>
 
-              {/* Estetik */}
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span className="font-medium">Estetik</span>
-                  <span className="font-bold">
-                    {store.designScore?.aesthetics ? (store.designScore.aesthetics * 100).toFixed(0) : "N/A"}%
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div
-                    className={`${getBarColor((store.designScore?.aesthetics || 0) * 100)} h-3 rounded-full transition-all duration-500`}
-                    style={{ width: `${(store.designScore?.aesthetics || 0) * 100}%` }}
-                  />
-                </div>
-              </div>
+        {/* All metrics section */}
+        {renderAllMetrics()}
 
-              {/* Prestanda */}
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span className="font-medium">SEO Prestanda</span>
-                  <span className="font-bold">
-                    {store.designScore?.performance ? (store.designScore.performance * 100).toFixed(0) : "N/A"}%
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div
-                    className={`${getBarColor((store.designScore?.performance || 0) * 100)} h-3 rounded-full transition-all duration-500`}
-                    style={{ width: `${(store.designScore?.performance || 0) * 100}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-4xl font-bold mb-2">
-                  {store.designScore ? 
-                    (((store.designScore.usability + store.designScore.aesthetics + store.designScore.performance) / 3) * 100).toFixed(0) 
-                    : "N/A"}%
-                </div>
-                <p className="text-gray-600 dark:text-gray-400">Genomsnittligt betyg</p>
-                {store.designScore?.comment && (
-                  <p className="text-sm mt-2 text-gray-500">{store.designScore.comment}</p>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-        
         <Tabs defaultValue="seo" className="mt-4">
           <TabsList className="grid w-full grid-cols-4 bg-gray-100 dark:bg-gray-800 rounded-md p-1">
             <TabsTrigger

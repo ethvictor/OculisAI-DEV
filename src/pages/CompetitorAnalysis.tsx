@@ -1,7 +1,8 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2 } from "lucide-react";
+import { Search, Loader2, Timer } from "lucide-react";
 import { CompetitorCard } from "@/components/CompetitorCard";
 import { useToast } from "@/hooks/use-toast";
 import { StoreMetrics } from "@/pages/types";
@@ -21,6 +22,8 @@ const CompetitorAnalysis = () => {
   const [url, setUrl] = useState("");
   const [competitors, setCompetitors] = useState<StoreMetrics[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisStartTime, setAnalysisStartTime] = useState<number | null>(null);
+  const [analysisPhase, setAnalysisPhase] = useState<string>("");
   const { toast } = useToast();
 
   const handleAnalyzeCompetitor = async () => {
@@ -46,9 +49,20 @@ const CompetitorAnalysis = () => {
       return;
     }
 
+    // Start timing
+    const startTime = performance.now();
+    setAnalysisStartTime(startTime);
+    
     setIsAnalyzing(true);
+    setAnalysisPhase("Förbereder konkurrentanalys...");
+    
+    console.time("totalAnalysisTime");
+    console.log(`🕒 ${new Date().toISOString()} - Påbörjar analys av konkurrent: ${formattedUrl}`);
+    
     try {
       console.log("Skickar förfrågan om konkurrentanalys med URL:", formattedUrl);
+      
+      setAnalysisPhase("Skrapar konkurrentens webbsida...");
       
       const response = await fetch(`${BACKEND_URL}/get_suggestions`, {
         method: "POST",
@@ -63,6 +77,8 @@ const CompetitorAnalysis = () => {
         }),
       });
       
+      setAnalysisPhase("Analyserar konkurrent...");
+      
       if (!response.ok) {
         let errorMessage = `HTTP error! status: ${response.status}`;
         try {
@@ -73,6 +89,8 @@ const CompetitorAnalysis = () => {
         }
         throw new Error(errorMessage);
       }
+
+      setAnalysisPhase("Bearbetar analysresultat...");
 
       const responseText = await response.text();
       let data;
@@ -114,12 +132,23 @@ const CompetitorAnalysis = () => {
 
       setCompetitors(prev => [...prev, newCompetitor]);
       
+      // Log timing
+      console.timeEnd("totalAnalysisTime");
+      const endTime = performance.now();
+      const totalTime = (endTime - startTime) / 1000;
+      console.log(`✅ Analys slutförd efter ${totalTime.toFixed(2)}s`);
+      
       toast({
         title: "Analys klar",
         description: "Konkurrenten har analyserats framgångsrikt",
       });
     } catch (error) {
+      const endTime = performance.now();
+      const totalTime = (endTime - startTime) / 1000;
+      
       console.error("Fel vid analys av konkurrent:", error);
+      console.log(`❌ Analys misslyckades efter ${totalTime.toFixed(2)}s`);
+      
       toast({
         title: "Ett fel uppstod",
         description: error instanceof Error ? error.message : "Kunde inte analysera konkurrenten",
@@ -127,6 +156,8 @@ const CompetitorAnalysis = () => {
       });
     } finally {
       setIsAnalyzing(false);
+      setAnalysisPhase("");
+      setAnalysisStartTime(null);
     }
   };
 
@@ -178,16 +209,27 @@ const CompetitorAnalysis = () => {
 
         {isAnalyzing && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl flex items-center space-x-4">
-              <div className="relative">
-                <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                  <div className="w-6 h-6 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center">
-                    <div className="w-4 h-4 bg-indigo-600 rounded-full"></div>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl flex flex-col items-center space-y-4">
+              <div className="flex items-center space-x-4 mb-2">
+                <div className="relative">
+                  <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <div className="w-6 h-6 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center">
+                      <div className="w-4 h-4 bg-indigo-600 rounded-full"></div>
+                    </div>
                   </div>
                 </div>
+                <p className="text-lg font-medium">{analysisPhase || "Analyserar konkurrenten..."}</p>
               </div>
-              <p className="text-lg font-medium">Analyserar konkurrenten...</p>
+              
+              {analysisStartTime && (
+                <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+                  <Timer className="h-4 w-4 mr-1" />
+                  <span>
+                    {((performance.now() - analysisStartTime) / 1000).toFixed(1)}s
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         )}

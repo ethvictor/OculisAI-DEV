@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { ArrowUpIcon, ArrowDownIcon, TrendingUp, Layout, Star, Plus, Loader2, Globe, Search, ShoppingCart, Zap, Trophy, Save } from "lucide-react";
@@ -198,6 +197,55 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
     );
   }
 
+  // Helper function for rendering all metrics in the dialog
+  const renderAllMetrics = () => {
+    if (!store.designScore) return null;
+    
+    const metrics = [
+      {
+        label: "Användarupplevelse",
+        value: store.designScore.usability ? `${(store.designScore.usability * 100).toFixed(0)}%` : "N/A",
+        color: getBarColor(store.designScore.usability * 100)
+      },
+      {
+        label: "Estetik",
+        value: store.designScore.aesthetics ? `${(store.designScore.aesthetics * 100).toFixed(0)}%` : "N/A",
+        color: getBarColor(store.designScore.aesthetics * 100)
+      },
+      {
+        label: "Prestanda",
+        value: store.designScore.performance ? `${(store.designScore.performance * 100).toFixed(0)}%` : "N/A",
+        color: getBarColor(store.designScore.performance * 100)
+      },
+      {
+        label: "Besökare/mån",
+        value: store.visitorsPerMonth ? `${store.visitorsPerMonth.toLocaleString()}` : "N/A",
+      },
+      {
+        label: "Produkter",
+        value: store.products !== undefined ? store.products.toString() : "N/A",
+      }
+    ];
+
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+        {metrics.map((metric, index) => (
+          <div key={index} className="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg">
+            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{metric.label}</div>
+            {metric.color ? (
+              <div className="flex items-center">
+                <div className={`w-3 h-3 rounded-full ${metric.color} mr-2`}></div>
+                <div className="text-lg font-semibold">{metric.value}</div>
+              </div>
+            ) : (
+              <div className="text-lg font-semibold">{metric.value}</div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const renderMetricCard = (icon: React.ReactNode, title: string, value: string | number | undefined, change?: number) => (
     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
       <div className="flex items-center gap-2 mb-2">
@@ -320,6 +368,10 @@ export const CompetitorCard = ({ store, onAnalyze, isEmpty = false }: Competitor
             </a>
           </p>
         </DialogHeader>
+        
+        {/* All metrics section */}
+        {renderAllMetrics()}
+        
         <Tabs defaultValue="seo" className="mt-4">
           <TabsList className="grid w-full grid-cols-4 bg-gray-100 dark:bg-gray-800 rounded-md p-1">
             <TabsTrigger
