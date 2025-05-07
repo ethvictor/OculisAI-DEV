@@ -53,15 +53,15 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
   return (
     <Card 
       className={cn(
-        "overflow-hidden bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-2xl p-6 transition-all duration-300 hover:shadow-lg cursor-pointer transform hover:-translate-y-1",
+        "relative overflow-hidden bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-2xl p-6 transition-all duration-300 hover:shadow-lg cursor-pointer transform hover:-translate-y-1",
         className
       )}
       onClick={onClick}
     >
-      <div className="space-y-6">
+      <div className="space-y-5">
         {/* Score circle - prominently displayed at top */}
-        <div className="flex justify-center mb-2">
-          <div className={`w-28 h-28 rounded-full flex flex-col items-center justify-center relative`}>
+        <div className="flex justify-center">
+          <div className="w-24 h-24 rounded-full flex flex-col items-center justify-center relative">
             <svg className="w-full h-full absolute" viewBox="0 0 100 100">
               <circle
                 cx="50"
@@ -84,28 +84,26 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
                 transform="rotate(-90 50 50)"
               />
             </svg>
-            <span className={`text-3xl font-bold z-10 ${getScoreTextColor(overallScore)}`}>{overallScore}%</span>
-            <span className={`text-xs z-10 font-medium ${getScoreTextColor(overallScore)}`}>
-              {getScoreDescription(overallScore)}
-            </span>
+            <span className={`text-3xl font-bold z-10 ${getScoreTextColor(overallScore)}`}>{overallScore}</span>
+            <span className="text-sm font-medium z-10 mt-0.5">{getScoreDescription(overallScore)}</span>
           </div>
         </div>
         
         {/* Header section with store name and URL */}
         <div className="text-center">
-          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 line-clamp-1">{name}</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 truncate">
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-1 line-clamp-1">{name}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
             {url}
           </p>
         </div>
           
         {/* Metrics section - enhanced with better visual indicators */}
-        <div className="space-y-4 mt-4">
-          <div className="space-y-2.5">
+        <div className="space-y-3 mt-3">
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <Search className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">SEO Score</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">SEO</span>
               </div>
               <span className={`text-sm font-medium px-2 py-0.5 rounded-full ${getScoreColor(metrics.seo)} bg-opacity-20 ${getScoreTextColor(metrics.seo)}`}>
                 {metrics.seo}%
@@ -118,7 +116,7 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
             />
           </div>
           
-          <div className="space-y-2.5">
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <Zap className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
@@ -135,7 +133,7 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
             />
           </div>
           
-          <div className="space-y-2.5">
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <Globe className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
@@ -153,8 +151,8 @@ export const StoreMetricsCard: React.FC<StoreMetricsProps> = ({
           </div>
         </div>
         
-        {/* Visual summary section with improved styling */}
-        <div className="pt-4 mt-2 border-t border-gray-200 dark:border-gray-700">
+        {/* Summary section with improved styling */}
+        <div className="pt-3 mt-2 border-t border-gray-200 dark:border-gray-700">
           <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 flex items-center">
             <Gauge className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2 flex-shrink-0" />
             <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
