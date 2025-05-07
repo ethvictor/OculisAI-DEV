@@ -1,9 +1,14 @@
+
 import { useState } from "react";
-import { StoreCard } from "@/components/StoreCard";
+import { StoreMetricsCard } from "@/components/StoreMetricsCard";
+import { StoreMetricsDialog } from "@/components/StoreMetricsDialog"; 
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Timer } from "lucide-react";
-import { useAuth0 } from "@auth0/auth0-react";
 import { LoadingAnimation } from "@/components/LoadingAnimation";
+import { Card } from "@/components/ui/card";
+import { Plus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export interface AnalysisResult {
   summary: string;
@@ -12,6 +17,7 @@ export interface AnalysisResult {
 }
 
 interface Store {
+  id?: string;
   name?: string;
   revenue?: number;
   revenueChange?: number;
@@ -48,10 +54,11 @@ const Index = () => {
   const [stores, setStores] = useState<Store[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { toast } = useToast();
-  const [analysisCount, setAnalysisCount] = useState(0);
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
   const [analysisStartTime, setAnalysisStartTime] = useState<number | null>(null);
   const [analysisPhase, setAnalysisPhase] = useState<string>("");
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [newUrl, setNewUrl] = useState("");
+  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
 
   const analyzeStore = async (url: string) => {
     // Start timing
@@ -59,8 +66,7 @@ const Index = () => {
     setAnalysisStartTime(startTime);
     setIsAnalyzing(true);
     setAnalysisPhase("Förbereder analys...");
-    
-    console.time("totalAnalysisTime");
+    setShowAddDialog(false);
     
     try {
       // Format the URL to ensure proper structure
@@ -83,21 +89,13 @@ const Index = () => {
         body: JSON.stringify({
           query: "Analysera butiken",
           url: formattedUrl,
-          analysis_type: null,       // eller undefined om du föredrar
+          analysis_type: null,
           is_competitor: false
         }),
       });
       
       setAnalysisPhase("Analyserar data...");
       
-      console.log("Svarsstatus:", response.status);
-      
-      const headers = {};
-      response.headers.forEach((value, key) => {
-        headers[key] = value;
-      });
-      console.log("Response headers:", headers);
-
       if (!response.ok) {
         let errorMessage = `HTTP error! status: ${response.status}`;
         try {
@@ -112,8 +110,7 @@ const Index = () => {
       setAnalysisPhase("Bearbetar resultat...");
       
       const responseText = await response.text();
-      console.log("Raw response:", responseText);
-
+      
       let data;
       try {
         data = JSON.parse(responseText);
@@ -122,12 +119,11 @@ const Index = () => {
         throw new Error("Ogiltigt svar från servern");
       }
 
-      console.log("Parsad API-respons:", data);
-
       const urlObj = new URL(formattedUrl);
       const domainName = urlObj.hostname.replace('www.', '');
 
       const newStore = {
+        id: `store-${Date.now()}`,
         name: domainName,
         url: formattedUrl,
         analysis: {
@@ -148,15 +144,11 @@ const Index = () => {
           },
         },
         designScore: data.designScore || { usability: 0, aesthetics: 0, performance: 0 },
-        recommendations_summary: data.recommendations_summary // om du använder denna del
+        recommendations_summary: data.recommendations_summary
       };
-
-      console.log("Skapar ny butik:", newStore);
 
       setStores(prev => [...prev, newStore]);
       
-      // Log timing
-      console.timeEnd("totalAnalysisTime");
       const endTime = performance.now();
       const totalTime = (endTime - startTime) / 1000;
       console.log(`✅ Analys slutförd efter ${totalTime.toFixed(2)}s`);
@@ -181,21 +173,22 @@ const Index = () => {
       setIsAnalyzing(false);
       setAnalysisPhase("");
       setAnalysisStartTime(null);
+      setNewUrl("");
     }
   };
 
-  const emptySlots = Array(Math.max(0, 3 - stores.length))
-    .fill(null)
-    .map((_, index) => ({ id: `empty-${index}` }));
+  const handleCardClick = (store: Store) => {
+    setSelectedStore(store);
+  };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950">
-      <div className="container py-8">
-        <header className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            E-handelsanalys Dashboard
+    <div className="min-h-screen bg-[#f5f5f7] dark:bg-gray-950">
+      <div className="container py-12">
+        <header className="mb-12 text-center">
+          <h1 className="text-4xl font-bold text-[#1d1d1f] dark:text-white mb-3">
+            E-handelsanalys
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400">
+          <p className="text-lg text-[#6e6e73] dark:text-gray-400 max-w-2xl mx-auto">
             Analysera och optimera din e-handelsbutik med AI-driven insikt
           </p>
         </header>
@@ -206,26 +199,81 @@ const Index = () => {
           startTime={analysisStartTime} 
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {stores.map((store, index) => (
-            <StoreCard
-              key={index}
-              store={{
-                ...store,
-                analysis: store.analysis
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          {/* Add Store Card */}
+          <Card 
+            className="overflow-hidden backdrop-blur-xl bg-white/80 border border-[#e8e8ed] rounded-2xl p-6 min-h-[240px] flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:shadow-lg group"
+            onClick={() => setShowAddDialog(true)}
+          >
+            <div className="w-16 h-16 rounded-full bg-[#f5f5f7] flex items-center justify-center mb-4 transition-transform group-hover:scale-110 group-hover:bg-[#e8e8ed]">
+              <Plus className="w-8 h-8 text-[#0066cc]" />
+            </div>
+            <p className="text-[#6e6e73] font-medium">Lägg till ny butik för analys</p>
+          </Card>
+          
+          {/* Store Cards */}
+          {stores.map((store) => (
+            <StoreMetricsCard 
+              key={store.id || store.url}
+              name={store.name || "Unknown"}
+              url={store.url || ""}
+              metrics={{
+                seo: store.designScore?.performance ? Math.round(store.designScore.performance * 100) : 0,
+                usability: store.designScore?.usability ? Math.round(store.designScore.usability * 100) : 0,
+                aesthetics: store.designScore?.aesthetics ? Math.round(store.designScore.aesthetics * 100) : 0
               }}
-              onAnalyze={analyzeStore}
-            />
-          ))}
-          {emptySlots.map((slot) => (
-            <StoreCard
-              key={slot.id}
-              store={{}}
-              onAnalyze={analyzeStore}
-              isEmpty={true}
+              onClick={() => handleCardClick(store)}
             />
           ))}
         </div>
+
+        {/* Add Store Dialog */}
+        <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-semibold text-[#1d1d1f]">Analysera ny butik</DialogTitle>
+            </DialogHeader>
+            <div className="mt-4 space-y-4">
+              <Input
+                placeholder="Ange butikens URL (t.ex. example.com)"
+                value={newUrl}
+                onChange={(e) => setNewUrl(e.target.value)}
+                className="rounded-xl border-[#e8e8ed]"
+              />
+              <Button 
+                onClick={() => analyzeStore(newUrl)}
+                disabled={isAnalyzing || !newUrl.trim()}
+                className="w-full rounded-full bg-[#0066cc] hover:bg-[#0055b3]"
+              >
+                Analysera butik
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Store Details Dialog */}
+        {selectedStore && (
+          <StoreMetricsDialog 
+            store={{
+              name: selectedStore.name || "",
+              url: selectedStore.url || "",
+              metrics: {
+                seo: selectedStore.designScore?.performance ? Math.round(selectedStore.designScore.performance * 100) : 0,
+                usability: selectedStore.designScore?.usability ? Math.round(selectedStore.designScore.usability * 100) : 0,
+                aesthetics: selectedStore.designScore?.aesthetics ? Math.round(selectedStore.designScore.aesthetics * 100) : 0,
+                visitorsPerMonth: null,
+                products: selectedStore.products,
+                revenue: selectedStore.revenue,
+                averagePrice: selectedStore.averagePrice
+              },
+              analysis: selectedStore.analysis
+            }}
+            open={!!selectedStore}
+            onOpenChange={(open) => {
+              if (!open) setSelectedStore(null);
+            }}
+          />
+        )}
       </div>
     </div>
   );
